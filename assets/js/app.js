@@ -19,7 +19,7 @@ function loadUserData() {
     
     if (!userJSON) {
         // No user logged in, redirect to login
-        window.location.href = '../index.html';
+        window.location.href = '/index.html';
         return;
     }
 
@@ -77,7 +77,7 @@ function showUserMenu() {
 // Logout functionality
 function logout() {
     localStorage.removeItem('currentUser');
-    window.location.href = '../index.html';
+    window.location.href = '/index.html';
 }
 
 // Load dashboard data
@@ -351,11 +351,11 @@ function switchRideTab(tabName) {
 
 // Navigation functions
 function goToPostRide() {
-    window.location.href = 'post-ride.html';
+    window.location.href = '/pages/post-ride.html';
 }
 
 function goToRequestRide() {
-    window.location.href = 'request-ride.html';
+    window.location.href = '/pages/request-ride.html';
 }
 
 // Ride action functions
@@ -394,6 +394,6 @@ function capitalizeFirst(str) {
 // Check authentication on page load
 window.addEventListener('load', function() {
     if (!localStorage.getItem('currentUser')) {
-        window.location.href = '../index.html';
+        window.location.href = '/index.html';
     }
 });

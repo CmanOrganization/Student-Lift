@@ -82,7 +82,7 @@ if (loginForm) {
         
         // Redirect after brief delay
         setTimeout(() => {
-            window.location.href = 'pages/dashboard.html';
+            window.location.href = '/pages/dashboard.html';
         }, 1000);
     });
 }
@@ -144,7 +144,7 @@ if (registerForm) {
         
         // Redirect after brief delay
         setTimeout(() => {
-            window.location.href = 'pages/dashboard.html';
+            window.location.href = '/pages/dashboard.html';
         }, 1000);
     });
 }

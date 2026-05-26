@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request a Ride - Student Lift</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
 <body>
     <div class="wrapper">
@@ -12,15 +12,15 @@
         <header>
             <div class="container">
                 <div class="header-content">
-                    <a href="dashboard.html" class="logo">
+                    <a href="/pages/dashboard.html" class="logo">
                         <div class="logo-icon">🚗</div>
                         <span>Student Lift</span>
                     </a>
                     <nav>
-                        <a href="dashboard.html">Dashboard</a>
-                        <a href="post-ride.html">Post Ride</a>
-                        <a href="request-ride.html">Request Ride</a>
-                        <a href="my-rides.html">My Rides</a>
+                        <a href="/pages/dashboard.html">Dashboard</a>
+                        <a href="/pages/post-ride.html">Post Ride</a>
+                        <a href="/pages/request-ride.html">Request Ride</a>
+                        <a href="/pages/my-rides.html">My Rides</a>
                     </nav>
                     <div class="user-menu">
                         <div class="user-avatar">
@@ -180,7 +180,7 @@
 
                                 <!-- Form Actions -->
                                 <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                                    <a href="dashboard.html" class="btn btn-secondary btn-block">Cancel</a>
+                                    <a href="/pages/dashboard.html" class="btn btn-secondary btn-block">Cancel</a>
                                     <button type="submit" class="btn btn-primary btn-block">
                                         Search Rides
                                     </button>
@@ -203,7 +203,7 @@
         </main>
     </div>
 
-    <script src="../assets/js/rides.js"></script>
+    <script src="/assets/js/rides.js"></script>
     <script>
         // Set minimum date to today
         document.getElementById('request-date').min = new Date().toISOString().split('T')[0];
