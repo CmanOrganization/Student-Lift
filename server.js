@@ -3,10 +3,13 @@ const mongoose = require(`mongoose`);
 const cors = require(`cors`);
 require(`dotenv`).config();
 
+const rideRoutes = require(`./routes/rideRoutes`);
+
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(`/v1/rides`, rideRoutes);
 
 app.get(`/`, (req,res) => {
     res.send(`BC WildWatch Student Lift API is running..`);
