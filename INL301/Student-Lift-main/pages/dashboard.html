@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Student Lift</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Header -->
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <a href="/pages/dashboard.html" class="logo">
+                        <div class="logo-icon">🚗</div>
+                        <span>Student Lift</span>
+                    </a>
+                    <nav>
+                        <a href="/pages/dashboard.html">Dashboard</a>
+                        <a href="/pages/post-ride.html">Post Ride</a>
+                        <a href="/pages/request-ride.html">Request Ride</a>
+                        <a href="/pages/my-rides.html">My Rides</a>
+                    </nav>
+                    <div class="user-menu">
+                        <div class="user-avatar" onclick="showUserMenu()">
+                            <span id="user-initial">U</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Welcome Section -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <div>
+                            <h1 class="card-title">Welcome back, <span id="user-name">Student</span>!</h1>
+                            <p class="card-subtitle">Your current campus: <strong id="user-campus">Stellenbosch</strong></p>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" onclick="goToPostRide()">
+                                Post a Ride
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Section -->
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Rides Completed</div>
+                        <div class="stat-value" id="rides-completed">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Money Saved</div>
+                        <div class="stat-value" id="money-saved">R0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Rating</div>
+                        <div class="stat-value" id="user-rating">5.0 ⭐</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Active Rides</div>
+                        <div class="stat-value" id="active-rides">0</div>
+                    </div>
+                </div>
+
+                <!-- Tabs Section -->
+                <div class="tabs">
+                    <button class="tab active" onclick="switchRideTab('available')">Available Rides</button>
+                    <button class="tab" onclick="switchRideTab('my-posts')">My Posted Rides</button>
+                    <button class="tab" onclick="switchRideTab('my-requests')">My Requests</button>
+                </div>
+
+                <!-- Available Rides -->
+                <div id="available-tab" class="tab-content active">
+                    <h2 style="margin-bottom: 1.5rem;">Available Rides Near You</h2>
+                    <div id="available-rides-list">
+                        <p class="text-center" style="color: var(--text-secondary); padding: 2rem;">
+                            Loading available rides...
+                        </p>
+                    </div>
+                </div>
+
+                <!-- My Posted Rides -->
+                <div id="my-posts-tab" class="tab-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Rides You Posted</h2>
+                        <button class="btn btn-primary" onclick="goToPostRide()">
+                            Post New Ride
+                        </button>
+                    </div>
+                    <div id="my-posted-rides">
+                        <p class="text-center" style="color: var(--text-secondary); padding: 2rem;">
+                            You haven't posted any rides yet
+                        </p>
+                    </div>
+                </div>
+
+                <!-- My Ride Requests -->
+                <div id="my-requests-tab" class="tab-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Ride Requests You Made</h2>
+                        <button class="btn btn-primary" onclick="goToRequestRide()">
+                            Request a Ride
+                        </button>
+                    </div>
+                    <div id="my-requests-list">
+                        <p class="text-center" style="color: var(--text-secondary); padding: 2rem;">
+                            You haven't made any ride requests yet
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sample Ride Card (Template for JS to clone) -->
+        <div id="ride-card-template" style="display: none;">
+            <div class="ride-card">
+                <div class="ride-header">
+                    <div class="ride-route">
+                        <div class="ride-from-to">
+                            <span>📍</span>
+                            <span class="ride-from"></span>
+                            <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
+                            <span class="ride-to"></span>
+                        </div>
+                    </div>
+                    <span class="ride-status status-available">Available</span>
+                </div>
+                <div class="ride-details">
+                    <div class="ride-detail-label">Time:</div>
+                    <div class="ride-time">10:30 AM</div>
+                    
+                    <div class="ride-detail-label">Driver:</div>
+                    <div class="ride-driver">John Doe</div>
+                    
+                    <div class="ride-detail-label">Cost:</div>
+                    <div class="ride-cost">R50</div>
+                    
+                    <div class="ride-detail-label">Seats:</div>
+                    <div class="ride-seats">3/4 available</div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-primary btn-block">Request Ride</button>
+                    <button class="btn btn-secondary btn-block">View Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/app.js"></script>
+</body>
+</html>
