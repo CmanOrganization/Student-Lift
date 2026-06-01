@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Rides - Student Lift</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Header -->
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <a href="/pages/dashboard.html" class="logo">
+                        <div class="logo-icon">🚗</div>
+                        <span>Student Lift</span>
+                    </a>
+                    <nav>
+                        <a href="/pages/dashboard.html">Dashboard</a>
+                        <a href="/pages/post-ride.html">Post Ride</a>
+                        <a href="/pages/request-ride.html">Request Ride</a>
+                        <a href="/pages/my-rides.html">My Rides</a>
+                    </nav>
+                    <div class="user-menu">
+                        <div class="user-avatar">
+                            <span id="user-initial">U</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h1 class="card-title">My Rides</h1>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active" onclick="switchRideTab('active')">Active Rides</button>
+                    <button class="tab" onclick="switchRideTab('completed')">Completed</button>
+                    <button class="tab" onclick="switchRideTab('cancelled')">Cancelled</button>
+                </div>
+
+                <!-- Active Rides Tab -->
+                <div id="active-tab" class="tab-content active">
+                    <h2 style="margin-bottom: 1.5rem;">Currently Active</h2>
+                    
+                    <div class="ride-card">
+                        <div class="ride-header">
+                            <div class="ride-route">
+                                <div class="ride-from-to">
+                                    <span>📍</span>
+                                    <span>Stellenbosch Campus Main Gate</span>
+                                    <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
+                                    <span>Pick n Pay Shopping Center</span>
+                                </div>
+                            </div>
+                            <span class="ride-status status-available">Confirmed</span>
+                        </div>
+                        <div class="ride-details">
+                            <div class="ride-detail-label">Time:</div>
+                            <div>10:30 AM - 11:15 AM</div>
+                            
+                            <div class="ride-detail-label">Date:</div>
+                            <div>Today, May 6, 2026</div>
+                            
+                            <div class="ride-detail-label">Role:</div>
+                            <div>Passenger</div>
+                            
+                            <div class="ride-detail-label">Driver:</div>
+                            <div>John Doe (⭐⭐⭐⭐⭐)</div>
+                            
+                            <div class="ride-detail-label">Cost:</div>
+                            <div>R45</div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-secondary">Contact Driver</button>
+                            <button class="btn btn-danger">Cancel Request</button>
+                        </div>
+                    </div>
+
+                    <div class="ride-card">
+                        <div class="ride-header">
+                            <div class="ride-route">
+                                <div class="ride-from-to">
+                                    <span>📍</span>
+                                    <span>Pretoria Campus</span>
+                                    <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
+                                    <span>Train Station</span>
+                                </div>
+                            </div>
+                            <span class="ride-status status-available">In Progress</span>
+                        </div>
+                        <div class="ride-details">
+                            <div class="ride-detail-label">Time:</div>
+                            <div>2:00 PM - 2:45 PM</div>
+                            
+                            <div class="ride-detail-label">Date:</div>
+                            <div>Today, May 6, 2026</div>
+                            
+                            <div class="ride-detail-label">Role:</div>
+                            <div>Driver</div>
+                            
+                            <div class="ride-detail-label">Passengers:</div>
+                            <div class="ride-passengers">
+                                <span class="passenger-avatar">SM</span>
+                                <span class="passenger-avatar">AK</span>
+                                <span style="color: var(--text-secondary);">2 passengers</span>
+                            </div>
+                            
+                            <div class="ride-detail-label">Revenue:</div>
+                            <div>R100 (2 × R50)</div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-secondary">View Passengers</button>
+                            <button class="btn btn-primary">Mark Complete</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Completed Rides Tab -->
+                <div id="completed-tab" class="tab-content">
+                    <h2 style="margin-bottom: 1.5rem;">Past Rides</h2>
+                    
+                    <div class="ride-card">
+                        <div class="ride-header">
+                            <div class="ride-route">
+                                <div class="ride-from-to">
+                                    <span>📍</span>
+                                    <span>Kempton Park Campus</span>
+                                    <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
+                                    <span>Shopping Mall</span>
+                                </div>
+                            </div>
+                            <span class="ride-status status-available" style="background-color: #ecfdf5; color: #166534;">Completed</span>
+                        </div>
+                        <div class="ride-details">
+                            <div class="ride-detail-label">Time:</div>
+                            <div>May 5, 2026 - 3:30 PM</div>
+                            
+                            <div class="ride-detail-label">Duration:</div>
+                            <div>45 minutes</div>
+                            
+                            <div class="ride-detail-label">Role:</div>
+                            <div>Passenger</div>
+                            
+                            <div class="ride-detail-label">Driver Rating:</div>
+                            <div>⭐⭐⭐⭐⭐ (5.0)</div>
+                            
+                            <div class="ride-detail-label">Cost:</div>
+                            <div>R60</div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-secondary">Leave Review</button>
+                        </div>
+                    </div>
+
+                    <div class="ride-card">
+                        <div class="ride-header">
+                            <div class="ride-route">
+                                <div class="ride-from-to">
+                                    <span>📍</span>
+                                    <span>Stellenbosch Campus</span>
+                                    <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
+                                    <span>Airport</span>
+                                </div>
+                            </div>
+                            <span class="ride-status status-available" style="background-color: #ecfdf5; color: #166534;">Completed</span>
+                        </div>
+                        <div class="ride-details">
+                            <div class="ride-detail-label">Time:</div>
+                            <div>May 4, 2026 - 5:00 PM</div>
+                            
+                            <div class="ride-detail-label">Duration:</div>
+                            <div>1 hour 15 minutes</div>
+                            
+                            <div class="ride-detail-label">Role:</div>
+                            <div>Driver</div>
+                            
+                            <div class="ride-detail-label">Passengers:</div>
+                            <div>3 passengers (all 5⭐)</div>
+                            
+                            <div class="ride-detail-label">Revenue:</div>
+                            <div>R150</div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-secondary">View Reviews</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cancelled Rides Tab -->
+                <div id="cancelled-tab" class="tab-content">
+                    <h2 style="margin-bottom: 1.5rem;">Cancelled Rides</h2>
+                    
+                    <div class="ride-card" style="opacity: 0.7;">
+                        <div class="ride-header">
+                            <div class="ride-route">
+                                <div class="ride-from-to">
+                                    <span>📍</span>
+                                    <span>Pretoria Campus</span>
+                                    <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
+                                    <span>Downtown</span>
+                                </div>
+                            </div>
+                            <span class="ride-status" style="background-color: #fef2f2; color: #991b1b;">Cancelled</span>
+                        </div>
+                        <div class="ride-details">
+                            <div class="ride-detail-label">Original Date:</div>
+                            <div>May 5, 2026 - 1:00 PM</div>
+                            
+                            <div class="ride-detail-label">Cancelled By:</div>
+                            <div>Driver</div>
+                            
+                            <div class="ride-detail-label">Reason:</div>
+                            <div>Vehicle maintenance</div>
+                        </div>
+                    </div>
+
+                    <p class="text-center" style="color: var(--text-secondary); padding: 2rem; margin-top: 1rem;">
+                        No other cancelled rides
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function switchRideTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
