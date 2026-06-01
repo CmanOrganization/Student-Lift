@@ -19,7 +19,7 @@ function loadUserData() {
     
     if (!userJSON) {
         // No user logged in, redirect to login
-        window.location.href = '../index.html';
+        window.location.href = '/index.html';
         return;
     }
 
@@ -77,7 +77,7 @@ function showUserMenu() {
 // Logout functionality
 function logout() {
     localStorage.removeItem('currentUser');
-    window.location.href = '../index.html';
+    window.location.href = '/index.html';
 }
 
 // Load dashboard data
@@ -119,52 +119,50 @@ function loadDashboardStats() {
 }
 
 // Load available rides list
-function loadAvailableRides() {
+async function loadAvailableRides() {
     const listContainer = document.getElementById('available-rides-list');
     if (!listContainer) return;
 
-    // Simulate available rides from backend
-    const availableRides = [
-        {
-            id: 1,
-            from: 'Stellenbosch Campus Main Gate',
-            to: 'Pick n Pay Shopping Center',
-            time: '10:30 AM',
-            driver: 'Sarah Johnson',
-            cost: 50,
-            seats: '2/4',
-            rating: 4.8
-        },
-        {
-            id: 2,
-            from: 'Pretoria Campus',
-            to: 'Train Station',
-            time: '2:00 PM',
-            driver: 'Michael Chen',
-            cost: 60,
-            seats: '3/4',
-            rating: 4.9
-        },
-        {
-            id: 3,
-            from: 'Kempton Park Campus',
-            to: 'Shopping Mall',
-            time: '4:30 PM',
-            driver: 'Emma Williams',
-            cost: 45,
-            seats: '1/3',
-            rating: 5.0
+    listContainer.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">Loading available rides...</p>';
+
+    try {
+        const response = await fetch('http://localhost:5000/v1/rides/all-Rides');
+
+        if (!response.ok) {
+            throw new Error(`Failed to load rides: ${response.status}`);
         }
-    ];
 
-    // Clear existing content
-    listContainer.innerHTML = '';
+        const rides = await response.json();
+        listContainer.innerHTML = '';
 
-    // Create ride cards
-    availableRides.forEach(ride => {
-        const card = createRideCard(ride, 'request');
-        listContainer.appendChild(card);
-    });
+        if (!rides.length) {
+            listContainer.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">No available rides found.</p>';
+            return;
+        }
+
+        rides.forEach(ride => {
+            const rideDate = ride.departureDate ? new Date(ride.departureDate) : null;
+            const rideTime = rideDate
+                ? rideDate.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })
+                : ride.departureTime;
+
+            const displayRide = {
+                id: ride._id,
+                from: ride.fromLocation,
+                to: ride.toLocation,
+                time: rideTime,
+                driver: ride.driverID ? `${ride.driverID.firstName} ${ride.driverID.lastName}` : 'Unknown Driver',
+                cost: ride.costPerSeat,
+                seats: `${ride.availableSeats}/${ride.totalSeats}`,
+                rating: ride.driverID?.ratingSummary?.average ?? 0
+            };
+
+            const card = createRideCard(displayRide, 'request');
+            listContainer.appendChild(card);
+        });
+    } catch (error) {
+        listContainer.innerHTML = `<p class="text-center" style="color: var(--danger-color); padding: 2rem;">${error.message}</p>`;
+    }
 }
 
 // Create a ride card element
@@ -353,11 +351,11 @@ function switchRideTab(tabName) {
 
 // Navigation functions
 function goToPostRide() {
-    window.location.href = 'post-ride.html';
+    window.location.href = '/pages/post-ride.html';
 }
 
 function goToRequestRide() {
-    window.location.href = 'request-ride.html';
+    window.location.href = '/pages/request-ride.html';
 }
 
 // Ride action functions
@@ -396,6 +394,6 @@ function capitalizeFirst(str) {
 // Check authentication on page load
 window.addEventListener('load', function() {
     if (!localStorage.getItem('currentUser')) {
-        window.location.href = '../index.html';
+        window.location.href = '/index.html';
     }
 });
