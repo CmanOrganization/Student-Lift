@@ -1,0 +1,16 @@
+{
+  "name": "student-lift",
+  "version": "1.0.0",
+  "description": "A ride-sharing platform designed exclusively for university students. Share journeys, save money, and build community connections.",
+  "main": "index.js",
+  "scripts": {
+	"start" : "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
