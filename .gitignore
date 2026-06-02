@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.local
+.vscode/
+*.code-workspace
+.history/
+npm-debug.log*
+yarn-debug.log*
+copilot-chat-history.json
+yarn-error.log*
+.DS_Store
+Thumbs.db

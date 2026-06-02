@@ -1,26 +1,46 @@
-const express = require('express');
+const express = require(`express`);
+const mongoose = require(`mongoose`);
+const cors = require(`cors`);
+const path = require(`path`);
+require(`dotenv`).config();
+
+const rideRoutes = require(`./routes/rideRoutes`);
+
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(express.json());
-app.use(express.static('.')); // serve your existing HTML/CSS/JS
+app.use(cors());
+app.use(`/assets`, express.static(path.join(__dirname, `assets`)));
+app.use(`/pages`, express.static(path.join(__dirname, `pages`)));
+app.use(`/v1/rides`, rideRoutes);
 
-// Health check route
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'Server is running! 🚀' });
+app.get(`/`, (req,res) => {
+    res.sendFile(path.join(__dirname, `index.html`));
 });
 
-// Placeholder route for rides
-app.get('/api/rides', (req, res) => {
-  res.json({ rides: [] });
+app.get(`/index.html`, (req, res) => {
+    res.sendFile(path.join(__dirname, `index.html`));
 });
 
-app.post('/api/rides', (req, res) => {
-  res.json({ message: 'Ride request received', data: req.body });
+app.get(`/dashboard`, (req, res) => {
+    res.sendFile(path.join(__dirname, `pages`, `dashboard.html`));
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Student Lift server running on port ${PORT}`);
+app.get(`/post-ride`, (req, res) => {
+    res.sendFile(path.join(__dirname, `pages`, `post-ride.html`));
 });
+
+app.get(`/request-ride`, (req, res) => {
+    res.sendFile(path.join(__dirname, `pages`, `request-ride.html`));
+});
+
+app.get(`/my-rides`, (req, res) => {
+    res.sendFile(path.join(__dirname, `pages`, `my-rides.html`));
+});
+
+const PORT = process.env.PORT || 5000;
+mongoose.connect(process.env.MONGO_URI)
+.then(() => {
+    app.listen(PORT, () => console.log(`Server running on port: http://localhost:${PORT}`));
+})
+.catch(error => console.log(error));
