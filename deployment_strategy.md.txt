@@ -1,0 +1,63 @@
+# Student Lift - Deployment Strategy
+
+## How We Deploy Code
+
+### Step 1: Developer Writes Code
+- Developer creates a new branch
+- Makes changes to files
+- Tests on their computer
+
+### Step 2: Push to GitHub
+- Developer pushes code to GitHub
+- Creates a Pull Request
+- Team reviews and approves
+- Code is merged to main branch
+
+### Step 3: Automatic Deployment
+- GitHub detects changes to main branch
+- Render automatically pulls the code
+- Render installs dependencies: npm install
+- Render starts the server: node server.js
+- Backend is now LIVE at: https://student-lift.onrender.com
+
+### Step 4: Testing
+- Test the backend: https://student-lift.onrender.com/api/health
+- Should see: {"status":"Server is running! 🚀"}
+
+## Technologies Used
+
+Frontend:
+- Hosted on Vercel
+- HTML, CSS, JavaScript
+- Auto-deploys when code changes
+
+Backend:
+- Hosted on Render
+- Node.js + Express
+- Port: 3000
+- Auto-deploys when code changes
+
+Database:
+- MongoDB Atlas (cloud)
+- Stores all ride and user data
+
+## Branch Protection
+
+The main branch is protected:
+- Requires Pull Request before merging
+- Requires 1 team member approval
+- Prevents accidental deletion
+
+## If Deployment Fails
+
+1. Go to Render Dashboard
+2. Click "Rollback"
+3. Select previous working version
+4. Click "Deploy"
+5. Previous version goes live
+
+## Live URLs
+
+Frontend: https://student-lift.vercel.app
+Backend API: https://student-lift.onrender.com
+Health Check: https://student-lift.onrender.com/api/health
