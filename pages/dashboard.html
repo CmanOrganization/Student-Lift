@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Student Lift</title>
     <link rel="stylesheet" href="/assets/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="wrapper">
@@ -115,6 +116,23 @@
                         </p>
                     </div>
                 </div>
+
+                <!-- Admin Analytics Section -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h2 class="card-title">Admin Analytics</h2>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:flex; gap:2rem; flex-wrap:wrap;">
+                            <div style="flex:1 1 400px;">
+                                <canvas id="ridesByStatusChart" width="400" height="300"></canvas>
+                            </div>
+                            <div style="flex:1 1 400px;">
+                                <canvas id="revenueChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
 
@@ -154,5 +172,6 @@
     </div>
 
     <script src="/assets/js/app.js"></script>
+    <script src="/assets/js/analytics.js"></script>
 </body>
 </html>
