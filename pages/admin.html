@@ -39,11 +39,30 @@
                     </div>
                     <div class="card-body">
                         <div style="display:flex; gap:2rem; flex-wrap:wrap;">
-                            <div style="flex:1 1 400px;">
+                            <div style="flex:1 1 400px; height: 300px; position: relative;">
                                 <canvas id="ridesByStatusChart" width="400" height="300"></canvas>
                             </div>
-                            <div style="flex:1 1 400px;">
+                            <div style="flex:1 1 400px; height: 300px; position: relative;">
                                 <canvas id="revenueChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                            <div class="card" style="margin: 0;">
+                                <div class="stat-label">Total Users</div>
+                                <div class="stat-value" id="statTotalUsers">0</div>
+                            </div>
+                            <div class="card" style="margin: 0;">
+                                <div class="stat-label">Total Rides</div>
+                                <div class="stat-value" id="statTotalRides">0</div>
+                            </div>
+                            <div class="card" style="margin: 0;">
+                                <div class="stat-label">Completion Rate</div>
+                                <div class="stat-value" id="statCompletionRate">0%</div>
+                            </div>
+                            <div class="card" style="margin: 0;">
+                                <div class="stat-label">Total Revenue</div>
+                                <div class="stat-value" id="statTotalRevenue">R0</div>
                             </div>
                         </div>
                     </div>

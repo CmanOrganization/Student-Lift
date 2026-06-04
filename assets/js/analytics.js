@@ -1,6 +1,6 @@
 // Analytics frontend: fetch platform metrics and render Chart.js graphs
 
-document.addEventListener('DOMContentLoaded', initializeAnalytics);
+document.addEventListener('DOMContentLoaded', startAnalytics);
 
 function getAuthToken() {
   return localStorage.getItem('authToken');
@@ -40,7 +40,10 @@ function renderRidesByStatusChart(elementId, ridesByStatus) {
       labels: labels,
       datasets: [{ label: 'Rides by Status', data: data, backgroundColor: ['#3b82f6', '#10b981', '#f97316'] }]
     },
-    options: { responsive: true }
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
   };
 
   return new Chart(ctx, config);
@@ -63,6 +66,7 @@ function renderRevenueChart(elementId, revenueByType) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         tooltip: {
           callbacks: { label: tooltipLabel }
@@ -74,9 +78,38 @@ function renderRevenueChart(elementId, revenueByType) {
   return new Chart(ctx, config);
 }
 
-async function initializeAnalytics() {
+function renderStatistics(metrics) {
+  var totalUsersEl = document.getElementById('statTotalUsers');
+  var totalRidesEl = document.getElementById('statTotalRides');
+  var completionRateEl = document.getElementById('statCompletionRate');
+  var totalRevenueEl = document.getElementById('statTotalRevenue');
+
+  if (totalUsersEl) {
+    totalUsersEl.textContent = metrics.totalUsers != null ? metrics.totalUsers : '0';
+  }
+
+  if (totalRidesEl) {
+    totalRidesEl.textContent = metrics.totalRidesCreated != null ? metrics.totalRidesCreated : '0';
+  }
+
+  if (completionRateEl) {
+    completionRateEl.textContent = metrics.completionRate != null ? metrics.completionRate + '%' : '0%';
+  }
+
+  if (totalRevenueEl) {
+    totalRevenueEl.textContent = metrics.totalRevenueExchanged != null ? 'R' + metrics.totalRevenueExchanged : 'R0';
+  }
+}
+
+async function startAnalytics() {
   var metrics = await fetchPlatformMetrics();
   if (!metrics) return;
+
+  initializeAnalytics(metrics);
+}
+
+function initializeAnalytics(metrics) {
+  renderStatistics(metrics);
 
   if (metrics.ridesByStatus) {
     renderRidesByStatusChart('ridesByStatusChart', metrics.ridesByStatus);
