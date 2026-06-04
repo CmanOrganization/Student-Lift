@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema({
     },
     studentID:  { type: String, required: true, unique: true },
     avatar:     { type: String },
+    role:       { type: String, required: true, enum: ['User', 'Admin'], default: 'User' },
     bio:        { type: String, maxlength: 500 },
     isVerified: { type: Boolean, default: false },
     isActive:   { type: Boolean, default: true },

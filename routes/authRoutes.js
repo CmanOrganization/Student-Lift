@@ -19,6 +19,10 @@ async function registerHandler(req, res) {
     var password = req.body.password;
     var campus = req.body.campus;
     var studentID = req.body.studentID;
+    var role = req.body.role || 'User';
+    if (role !== 'User' && role !== 'Admin') {
+      role = 'User';
+    }
 
     if (!firstName || !lastName || !email || !phoneNumber || !password || !campus || !studentID) {
       return res.status(400).json({ error: 'Missing required registration fields.' });
@@ -39,6 +43,7 @@ async function registerHandler(req, res) {
       passwordHash: passwordHash,
       campus: campus,
       studentID: studentID,
+      role: role,
       avatar: (firstName && firstName.charAt(0).toUpperCase()) || 'U'
     });
 
@@ -46,7 +51,7 @@ async function registerHandler(req, res) {
 
     var token = jwt.sign({ id: saved._id, email: saved.email }, getJwtSecret(), { expiresIn: process.env.JWT_EXPIRES_IN || '7d' });
 
-    return res.status(201).json({ token: token });
+    return res.status(201).json({ token: token, role: saved.role });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -76,7 +81,7 @@ async function loginHandler(req, res) {
 
     var token = jwt.sign({ id: user._id, email: user.email }, getJwtSecret(), { expiresIn: process.env.JWT_EXPIRES_IN || '7d' });
 
-    return res.json({ token: token });
+    return res.json({ token: token, role: user.role });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

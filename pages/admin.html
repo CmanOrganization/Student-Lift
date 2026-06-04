@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Student Lift</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <a href="/pages/dashboard.html" class="logo">
+                        <div class="logo-icon">🚗</div>
+                        <span>Student Lift - Admin</span>
+                    </a>
+                    <nav>
+                        <a href="/pages/dashboard.html">Dashboard</a>
+                        <a href="/pages/post-ride.html">Post Ride</a>
+                        <a href="/pages/request-ride.html">Request Ride</a>
+                        <a href="/pages/my-rides.html">My Rides</a>
+                    </nav>
+                    <div class="user-menu">
+                        <div class="user-avatar" onclick="showUserMenu()">
+                            <span id="user-initial">A</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="container">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="card-title">Admin Analytics</h1>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:flex; gap:2rem; flex-wrap:wrap;">
+                            <div style="flex:1 1 400px;">
+                                <canvas id="ridesByStatusChart" width="400" height="300"></canvas>
+                            </div>
+                            <div style="flex:1 1 400px;">
+                                <canvas id="revenueChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/assets/js/app.js"></script>
+    <script src="/assets/js/analytics.js"></script>
+</body>
+</html>

@@ -90,15 +90,17 @@ async function handleLoginSubmit(e) {
 
         var data = await response.json();
         var token = data.token;
+        var role = data.role || 'User';
         if (!token) {
             showAlert('No token returned from server', 'danger');
             return;
         }
 
         localStorage.setItem('authToken', token);
+        localStorage.setItem('authRole', role);
         showAlert('Login successful! Redirecting...', 'success');
 
-        setTimeout(redirectToDashboard, 800);
+        setTimeout(function() { redirectToRole(role); }, 800);
     } catch (err) {
         showAlert(err.message || 'Login failed', 'danger');
     }
@@ -164,15 +166,17 @@ async function handleRegisterSubmit(e) {
 
         var data = await response.json();
         var token = data.token;
+        var role = data.role || 'User';
         if (!token) {
             showAlert('No token returned from server', 'danger');
             return;
         }
 
         localStorage.setItem('authToken', token);
+        localStorage.setItem('authRole', role);
         showAlert('Account created successfully! Redirecting...', 'success');
 
-        setTimeout(redirectToDashboard, 800);
+        setTimeout(function() { redirectToRole(role); }, 800);
     } catch (err) {
         showAlert(err.message || 'Registration failed', 'danger');
     }
@@ -204,8 +208,12 @@ function removeAlert(el) {
     }
 }
 
-function redirectToDashboard() {
-    window.location.href = '/pages/dashboard.html';
+function redirectToRole(role) {
+    if (role === 'Admin') {
+        window.location.href = '/pages/admin.html';
+    } else {
+        window.location.href = '/pages/dashboard.html';
+    }
 }
 
 // Email validation
