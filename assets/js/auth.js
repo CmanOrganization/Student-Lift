@@ -98,6 +98,8 @@ async function handleLoginSubmit(e) {
 
         localStorage.setItem('authToken', token);
         localStorage.setItem('authRole', role);
+        // also set cookie so server can validate protected pages
+        try { document.cookie = 'authToken=' + token + '; path=/; max-age=' + (7*24*60*60) + ';'; } catch (e) {}
         showAlert('Login successful! Redirecting...', 'success');
 
         setTimeout(function() { redirectToRole(role); }, 800);
@@ -109,15 +111,21 @@ async function handleLoginSubmit(e) {
 async function handleRegisterSubmit(e) {
     e.preventDefault();
 
-    var fullname = document.getElementById('reg-fullname').value.trim();
-    var email = document.getElementById('reg-email').value.trim();
-    var phone = document.getElementById('reg-phone').value.trim();
-    var university = document.getElementById('reg-university').value;
-    var studentIDInput = document.getElementById('reg-studentid');
-    var studentID = studentIDInput ? studentIDInput.value.trim() : '';
-    var password = document.getElementById('reg-password').value;
-    var confirmPassword = document.getElementById('reg-confirm-password').value;
-    var terms = document.querySelector('input[name="terms"]').checked;
+    var form = document.getElementById('registerForm');
+    if (!form) {
+        showAlert('Registration form not found', 'danger');
+        return;
+    }
+
+    var fd = new FormData(form);
+    var fullname = (fd.get('fullname') || '').toString().trim();
+    var email = (fd.get('email') || '').toString().trim();
+    var phone = (fd.get('phone') || '').toString().trim();
+    var university = (fd.get('university') || '').toString();
+    var studentID = (fd.get('studentid') || '').toString().trim();
+    var password = (fd.get('password') || '').toString();
+    var confirmPassword = (fd.get('confirm_password') || '').toString();
+    var terms = form.querySelector('input[name="terms"]') ? form.querySelector('input[name="terms"]').checked : false;
 
     if (!fullname || !email || !phone || !university || !studentID || !password || !confirmPassword) {
         showAlert('Please fill in all fields', 'danger');
@@ -139,23 +147,28 @@ async function handleRegisterSubmit(e) {
         return;
     }
 
-    var names = fullname.trim().split(' ');
+    var names = fullname.split(' ');
     var firstName = names.shift() || '';
     var lastName = names.join(' ') || '';
 
+    var submitBtn = form.querySelector('button[type="submit"]');
     try {
+        if (submitBtn) { submitBtn.disabled = true; }
+
+        var payload = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phoneNumber: phone,
+            password: password,
+            campus: university,
+            studentID: studentID
+        };
+
         var response = await fetch('/api/auth/register', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                phoneNumber: phone,
-                password: password,
-                campus: university,
-                studentID: studentID
-            })
+            headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+            body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
@@ -174,11 +187,14 @@ async function handleRegisterSubmit(e) {
 
         localStorage.setItem('authToken', token);
         localStorage.setItem('authRole', role);
+        try { document.cookie = 'authToken=' + token + '; path=/; max-age=' + (7*24*60*60) + ';'; } catch (e) {}
         showAlert('Account created successfully! Redirecting...', 'success');
 
         setTimeout(function() { redirectToRole(role); }, 800);
     } catch (err) {
         showAlert(err.message || 'Registration failed', 'danger');
+    } finally {
+        if (submitBtn) { submitBtn.disabled = false; }
     }
 }
 

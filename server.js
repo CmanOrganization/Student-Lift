@@ -15,8 +15,36 @@ app.use(cors());
 
 // Serve static directories explicitly so routes like '/' and '/pages/*' resolve
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.use('/pages', express.static(path.join(__dirname, 'pages')));
 app.use('/css', express.static(path.join(__dirname, 'assets', 'css')));
+
+// Protect admin page with server-side check
+const authMiddleware = require('./middleware/authMiddleware');
+const User = require('./Models/User');
+
+app.get('/pages/admin.html', authMiddleware.protect, async function (req, res) {
+  try {
+    var userId = req.user && req.user.id;
+    if (!userId) {
+      return res.status(401).redirect('/');
+    }
+
+    var user = await User.findById(userId).select('role');
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    if (user.role !== 'Admin') {
+      return res.status(403).send('Forbidden');
+    }
+
+    return res.sendFile(path.join(__dirname, 'pages', 'admin.html'));
+  } catch (err) {
+    return res.status(500).send('Server error');
+  }
+});
+
+// Serve pages (regular static)
+app.use('/pages', express.static(path.join(__dirname, 'pages')));
 
 
 // Mount existing route modules

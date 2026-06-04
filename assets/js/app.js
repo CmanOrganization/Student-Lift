@@ -104,6 +104,7 @@ function showUserMenu() {
 // Logout functionality
 function logout() {
     localStorage.removeItem('authToken');
+    try { document.cookie = 'authToken=; Max-Age=0; path=/;'; } catch (e) {}
     window.location.href = '/index.html';
 }
 
