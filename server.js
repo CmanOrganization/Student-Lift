@@ -47,7 +47,7 @@ function connectDB() {
     process.exit(1);
   }
 
-  mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  mongoose.connect(MONGODB_URI)
     .then(function () { onDbConnected(); })
     .catch(function (err) { onDbError(err); });
 }
