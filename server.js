@@ -18,10 +18,12 @@ app.use(express.static(path.join(__dirname, 'assets')));
 const rideRoutes = require('./routes/rideRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const metricsRoutes = require('./routes/metricsRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 app.use('/api/rides', rideRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/metrics', metricsRoutes);
+app.use('/api/auth', authRoutes);
 
 function healthHandler(req, res) {
   res.json({ status: 'Server is running! 🚀' });

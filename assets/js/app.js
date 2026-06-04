@@ -6,27 +6,54 @@
 // User object for tracking current logged-in user
 let currentUser = null;
 
-// Initialize app on page load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', initializeApp);
+
+function initializeApp() {
     loadUserData();
     setupNavigation();
     loadDashboardData();
-});
+}
 
-// Load user data from localStorage
-function loadUserData() {
-    const userJSON = localStorage.getItem('currentUser');
-    
-    if (!userJSON) {
-        // No user logged in, redirect to login
+async function loadUserData() {
+    var token = localStorage.getItem('authToken');
+    if (!token) {
         window.location.href = '/index.html';
         return;
     }
 
-    currentUser = JSON.parse(userJSON);
-    
-    // Update UI with user information
-    updateUserDisplay();
+    try {
+        var response = await fetch('/api/auth/me', {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (!response.ok) {
+            localStorage.removeItem('authToken');
+            window.location.href = '/index.html';
+            return;
+        }
+
+        var data = await response.json();
+        var user = data.user;
+        if (!user) {
+            localStorage.removeItem('authToken');
+            window.location.href = '/index.html';
+            return;
+        }
+
+        currentUser = user;
+        if (currentUser.firstName) {
+            currentUser.name = (currentUser.firstName + ' ' + (currentUser.lastName || '')).trim();
+        }
+        if (!currentUser.avatar && currentUser.firstName) {
+            currentUser.avatar = currentUser.firstName.charAt(0).toUpperCase();
+        }
+
+        updateUserDisplay();
+    } catch (err) {
+        localStorage.removeItem('authToken');
+        window.location.href = '/index.html';
+    }
 }
 
 // Update user display elements
@@ -76,7 +103,7 @@ function showUserMenu() {
 
 // Logout functionality
 function logout() {
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem('authToken');
     window.location.href = '/index.html';
 }
 
@@ -126,10 +153,14 @@ async function loadAvailableRides() {
     listContainer.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">Loading available rides...</p>';
 
     try {
-        const response = await fetch('http://localhost:5000/v1/rides/all-Rides');
+        var token = localStorage.getItem('authToken');
+        var headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        const response = await fetch('/api/rides/all-Rides', { method: 'GET', headers: headers });
 
         if (!response.ok) {
-            throw new Error(`Failed to load rides: ${response.status}`);
+            throw new Error('Failed to load rides: ' + response.status);
         }
 
         const rides = await response.json();
@@ -209,125 +240,87 @@ function createRideCard(ride, action = 'view') {
 
 // Load user's posted rides
 function loadPostedRides() {
-    const container = document.getElementById('my-posted-rides');
+    fetchAndRenderPostedRides();
+}
+
+async function fetchAndRenderPostedRides() {
+    var container = document.getElementById('my-posted-rides');
     if (!container) return;
+    container.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">Loading your posted rides...</p>';
 
-    // Simulate user's posted rides
-    const postedRides = [
-        {
-            id: 101,
-            from: 'Stellenbosch Campus',
-            to: 'Airport',
-            time: '5:00 PM',
-            seats: '2/3',
-            cost: 150,
-            rating: 5.0,
-            passengers: 1
+    try {
+        var token = localStorage.getItem('authToken');
+        var headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        var response = await fetch('/api/rides/all-Rides', { method: 'GET', headers: headers });
+        if (!response.ok) {
+            container.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">You haven\'t posted any rides yet</p>';
+            return;
         }
-    ];
 
-    container.innerHTML = '';
+        var rides = await response.json();
+        var myRides = rides.filter(function (r) { return r.driverID && (r.driverID._id === (currentUser && currentUser._id)); });
 
-    if (postedRides.length === 0) {
-        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">You haven\'t posted any rides yet</p>';
-        return;
+        container.innerHTML = '';
+        if (myRides.length === 0) {
+            container.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">You haven\'t posted any rides yet</p>';
+            return;
+        }
+
+        for (var i = 0; i < myRides.length; i++) {
+            var ride = myRides[i];
+            var card = document.createElement('div');
+            card.className = 'ride-card';
+            card.innerHTML = '\n                <div class="ride-header">\n                    <div class="ride-route">\n                        <div class="ride-from-to">\n                            <span>📍</span>\n                            <span>' + (ride.fromLocation || '') + '</span>\n                            <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>\n                            <span>' + (ride.toLocation || '') + '</span>\n                        </div>\n                    </div>\n                    <span class="ride-status status-available">' + (ride.status || 'Active') + '</span>\n                </div>\n                <div class="ride-details">\n                    <div class="ride-detail-label">Time:</div>\n                    <div>' + (ride.departureTime || '') + '</div>\n                        \n                    <div class="ride-detail-label">Seats Available:</div>\n                    <div>' + ((ride.availableSeats !== undefined) ? (ride.availableSeats + '/' + (ride.totalSeats || '')) : '') + '</div>\n                        \n                    <div class="ride-detail-label">Cost:</div>\n                    <div>R' + (ride.costPerSeat || '') + '</div>\n                        \n                    <div class="ride-detail-label">Pending Requests:</div>\n                    <div>' + ((ride.requests && ride.requests.length) || 0) + ' request(s)</div>\n                </div>\n                <div style="display: flex; gap: 1rem;">\n                    <button class="btn btn-secondary btn-block" onclick="editRide(' + (ride._id || '') + ')">Edit</button>\n                    <button class="btn btn-danger btn-block" onclick="cancelRide(' + (ride._id || '') + ')">Cancel</button>\n                </div>\n            ';
+            container.appendChild(card);
+        }
+    } catch (err) {
+        container.innerHTML = '<p class="text-center" style="color: var(--danger-color); padding: 2rem;">Failed to load posted rides</p>';
     }
-
-    postedRides.forEach(ride => {
-        const card = document.createElement('div');
-        card.className = 'ride-card';
-        card.innerHTML = `
-            <div class="ride-header">
-                <div class="ride-route">
-                    <div class="ride-from-to">
-                        <span>📍</span>
-                        <span>${ride.from}</span>
-                        <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
-                        <span>${ride.to}</span>
-                    </div>
-                </div>
-                <span class="ride-status status-available">Active</span>
-            </div>
-            <div class="ride-details">
-                <div class="ride-detail-label">Time:</div>
-                <div>${ride.time}</div>
-                
-                <div class="ride-detail-label">Seats Available:</div>
-                <div>${ride.seats}</div>
-                
-                <div class="ride-detail-label">Cost:</div>
-                <div>R${ride.cost}</div>
-                
-                <div class="ride-detail-label">Pending Requests:</div>
-                <div>${ride.passengers} request(s)</div>
-            </div>
-            <div style="display: flex; gap: 1rem;">
-                <button class="btn btn-secondary btn-block" onclick="editRide(${ride.id})">Edit</button>
-                <button class="btn btn-danger btn-block" onclick="cancelRide(${ride.id})">Cancel</button>
-            </div>
-        `;
-        container.appendChild(card);
-    });
 }
 
 // Load user's ride requests
 function loadRideRequests() {
-    const container = document.getElementById('my-requests-list');
+    fetchAndRenderRideRequests();
+}
+
+async function fetchAndRenderRideRequests() {
+    var container = document.getElementById('my-requests-list');
     if (!container) return;
+    container.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">Loading your ride requests...</p>';
 
-    // Simulate ride requests
-    const requests = [
-        {
-            id: 201,
-            from: 'Pretoria Campus',
-            to: 'Downtown',
-            time: '1:00 PM',
-            status: 'pending',
-            cost: 75
+    try {
+        var token = localStorage.getItem('authToken');
+        var headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        var response = await fetch('/api/bookings/my-requests', { method: 'GET', headers: headers });
+        if (!response.ok) {
+            container.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">You haven\'t made any ride requests yet</p>';
+            return;
         }
-    ];
 
-    container.innerHTML = '';
+        var requests = await response.json();
+        if (!requests || requests.length === 0) {
+            container.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">You haven\'t made any ride requests yet</p>';
+            return;
+        }
 
-    if (requests.length === 0) {
-        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">You haven\'t made any ride requests yet</p>';
-        return;
+        container.innerHTML = '';
+        for (var i = 0; i < requests.length; i++) {
+            var request = requests[i];
+            var card = document.createElement('div');
+            card.className = 'ride-card';
+            var statusClass = (request.status === 'pending') ? 'status-available' : 'status-full';
+            var statusText = (request.status && request.status.charAt(0).toUpperCase() + request.status.slice(1)) || '';
+
+            card.innerHTML = '\n            <div class="ride-header">\n                <div class="ride-route">\n                    <div class="ride-from-to">\n                        <span>📍</span>\n                        <span>' + (request.fromLocation || request.from || '') + '</span>\n                        <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>\n                        <span>' + (request.toLocation || request.to || '') + '</span>\n                    </div>\n                </div>\n                <span class="ride-status ' + statusClass + '">' + statusText + '</span>\n            </div>\n            <div class="ride-details">\n                <div class="ride-detail-label">Time:</div>\n                <div>' + (request.departureTime || request.time || '') + '</div>\n                \n                <div class="ride-detail-label">Cost:</div>\n                <div>R' + (request.cost || '') + '</div>\n                \n                <div class="ride-detail-label">Status:</div>\n                <div>' + (request.statusDetail || 'Waiting for driver confirmation...') + '</div>\n            </div>\n            <div style="display: flex; gap: 1rem;">\n                <button class="btn btn-secondary btn-block" onclick="cancelRequest(' + (request._id || request.id || '') + ')">Cancel Request</button>\n            </div>\n        ';
+            container.appendChild(card);
+        }
+    } catch (err) {
+        container.innerHTML = '<p class="text-center" style="color: var(--danger-color); padding: 2rem;">Failed to load requests</p>';
     }
-
-    requests.forEach(request => {
-        const card = document.createElement('div');
-        card.className = 'ride-card';
-        const statusClass = request.status === 'pending' ? 'status-available' : 'status-full';
-        const statusText = request.status.charAt(0).toUpperCase() + request.status.slice(1);
-
-        card.innerHTML = `
-            <div class="ride-header">
-                <div class="ride-route">
-                    <div class="ride-from-to">
-                        <span>📍</span>
-                        <span>${request.from}</span>
-                        <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
-                        <span>${request.to}</span>
-                    </div>
-                </div>
-                <span class="ride-status ${statusClass}">${statusText}</span>
-            </div>
-            <div class="ride-details">
-                <div class="ride-detail-label">Time:</div>
-                <div>${request.time}</div>
-                
-                <div class="ride-detail-label">Cost:</div>
-                <div>R${request.cost}</div>
-                
-                <div class="ride-detail-label">Status:</div>
-                <div>Waiting for driver confirmation...</div>
-            </div>
-            <div style="display: flex; gap: 1rem;">
-                <button class="btn btn-secondary btn-block" onclick="cancelRequest(${request.id})">Cancel Request</button>
-            </div>
-        `;
-        container.appendChild(card);
-    });
 }
 
 // Switch between ride tabs
@@ -392,8 +385,10 @@ function capitalizeFirst(str) {
 }
 
 // Check authentication on page load
-window.addEventListener('load', function() {
-    if (!localStorage.getItem('currentUser')) {
+window.addEventListener('load', checkAuthOnLoad);
+
+function checkAuthOnLoad() {
+    if (!localStorage.getItem('authToken')) {
         window.location.href = '/index.html';
     }
-});
+}
