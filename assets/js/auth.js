@@ -16,8 +16,10 @@ function switchTab(tabName) {
     const loginTab = document.getElementById('login-tab');
     const registerTab = document.getElementById('register-tab');
     const tabs = document.querySelectorAll('.tab');
+    const tabPanels = document.querySelectorAll('.tab-content');
 
     tabs.forEach(tab => tab.classList.remove('active'));
+    tabPanels.forEach(panel => panel.classList.remove('active'));
     
     if (tabName === 'login') {
         loginTab.classList.add('active');
@@ -105,16 +107,23 @@ async function handleLoginSubmit(e) {
 async function handleRegisterSubmit(e) {
     e.preventDefault();
 
-    var fullname = document.getElementById('reg-fullname').value;
-    var email = document.getElementById('reg-email').value;
-    var phone = document.getElementById('reg-phone').value;
+    var fullname = document.getElementById('reg-fullname').value.trim();
+    var email = document.getElementById('reg-email').value.trim();
+    var phone = document.getElementById('reg-phone').value.trim();
     var university = document.getElementById('reg-university').value;
+    var studentIDInput = document.getElementById('reg-studentid');
+    var studentID = studentIDInput ? studentIDInput.value.trim() : '';
     var password = document.getElementById('reg-password').value;
     var confirmPassword = document.getElementById('reg-confirm-password').value;
     var terms = document.querySelector('input[name="terms"]').checked;
 
-    if (!fullname || !email || !phone || !university || !password || !confirmPassword) {
+    if (!fullname || !email || !phone || !university || !studentID || !password || !confirmPassword) {
         showAlert('Please fill in all fields', 'danger');
+        return;
+    }
+
+    if (!validateEmail(email)) {
+        showAlert('Please enter a valid email address', 'danger');
         return;
     }
 
@@ -131,7 +140,6 @@ async function handleRegisterSubmit(e) {
     var names = fullname.trim().split(' ');
     var firstName = names.shift() || '';
     var lastName = names.join(' ') || '';
-    var studentID = document.getElementById('reg-studentid') ? document.getElementById('reg-studentid').value : Date.now().toString();
 
     try {
         var response = await fetch('/api/auth/register', {

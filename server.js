@@ -12,7 +12,12 @@ const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI || process.
 
 app.use(express.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, 'assets')));
+
+// Serve static directories explicitly so routes like '/' and '/pages/*' resolve
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/pages', express.static(path.join(__dirname, 'pages')));
+app.use('/css', express.static(path.join(__dirname, 'assets', 'css')));
+
 
 // Mount existing route modules
 const rideRoutes = require('./routes/rideRoutes');
@@ -30,6 +35,12 @@ function healthHandler(req, res) {
 }
 
 app.get('/api/health', healthHandler);
+
+function rootHandler(req, res) {
+  res.sendFile(path.join(__dirname, 'index.html'));
+}
+
+app.get('/', rootHandler);
 
 function onDbConnected() {
   console.log('MongoDB connected');

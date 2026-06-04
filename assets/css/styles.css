@@ -227,6 +227,14 @@ textarea {
     gap: 1rem;
 }
 
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
 .form-actions {
     display: flex;
     gap: 1rem;
