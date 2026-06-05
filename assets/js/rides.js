@@ -4,12 +4,10 @@
  */
 
 // Initialize rides page
-document.addEventListener('DOMContentLoaded', initializeRides);
-
-function initializeRides() {
+document.addEventListener('DOMContentLoaded', function() {
     setupCampusSelection();
     setupFormValidation();
-}
+});
 
 // Setup campus selection with interactive UI
 function setupCampusSelection() {
@@ -125,59 +123,77 @@ function formatDateTime(date, time) {
     });
 }
 
-// Server-backed rides API functions using JWT from localStorage
-function getAuthToken() {
-    return localStorage.getItem('authToken');
-}
+// Rides storage (replace with backend API calls)
+class RidesManager {
+    constructor() {
+        this.rides = this.loadRides();
+    }
 
-async function fetchAllRidesApi() {
-    try {
-        var token = getAuthToken();
-        var headers = { 'Content-Type': 'application/json' };
-        if (token) {
-            headers['Authorization'] = 'Bearer ' + token;
+    loadRides() {
+        const ridesJSON = localStorage.getItem('rides');
+        return ridesJSON ? JSON.parse(ridesJSON) : [];
+    }
+
+    saveRides() {
+        localStorage.setItem('rides', JSON.stringify(this.rides));
+    }
+
+    addRide(rideData) {
+        const ride = {
+            id: Date.now(),
+            ...rideData,
+            createdAt: new Date().toISOString(),
+            status: 'active',
+            requests: []
+        };
+        
+        this.rides.push(ride);
+        this.saveRides();
+        return ride;
+    }
+
+    getRidesByUser(userId) {
+        return this.rides.filter(ride => ride.userId === userId);
+    }
+
+    getRidesByStatus(status) {
+        return this.rides.filter(ride => ride.status === status);
+    }
+
+    updateRide(rideId, updates) {
+        const ride = this.rides.find(r => r.id === rideId);
+        if (ride) {
+            Object.assign(ride, updates);
+            this.saveRides();
         }
+        return ride;
+    }
 
-        var response = await fetch('/api/rides/all-Rides', { method: 'GET', headers: headers });
-        if (!response.ok) {
-            return [];
+    cancelRide(rideId) {
+        return this.updateRide(rideId, { status: 'cancelled' });
+    }
+
+    completeRide(rideId) {
+        return this.updateRide(rideId, { status: 'completed' });
+    }
+
+    addRequestToRide(rideId, requestData) {
+        const ride = this.rides.find(r => r.id === rideId);
+        if (ride) {
+            ride.requests.push({
+                id: Date.now(),
+                ...requestData,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            });
+            this.saveRides();
         }
-        var data = await response.json();
-        return data;
-    } catch (err) {
-        return [];
+        return ride;
     }
 }
 
-async function postRideApi(rideData) {
-    var token = getAuthToken();
-    var headers = { 'Content-Type': 'application/json' };
-    if (token) {
-        headers['Authorization'] = 'Bearer ' + token;
-    }
-
-    var response = await fetch('/api/rides/post-Ride', { method: 'POST', headers: headers, body: JSON.stringify(rideData) });
-    if (!response.ok) {
-        var err = await response.json();
-        throw new Error(err.error || 'Failed to post ride');
-    }
-    return await response.json();
-}
-
-async function addRequestToRideApi(rideId, requestData) {
-    var token = getAuthToken();
-    var headers = { 'Content-Type': 'application/json' };
-    if (token) {
-        headers['Authorization'] = 'Bearer ' + token;
-    }
-
-    var response = await fetch('/api/bookings/book-seat', { method: 'POST', headers: headers, body: JSON.stringify(Object.assign({ rideId: rideId }, requestData)) });
-    if (!response.ok) {
-        var err = await response.json();
-        throw new Error(err.error || 'Failed to request seats');
-    }
-    return await response.json();
-}
+// Initialize rides manager
+const ridesManager = new RidesManager();
 
 // Ride filter and search
 class RideFilter {
@@ -252,7 +268,7 @@ class RideCalculator {
 
 // Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { RideFilter: RideFilter, RideCalculator: RideCalculator };
+    module.exports = { RidesManager, RideFilter, RideCalculator };
 }
 
 // Availability Checker

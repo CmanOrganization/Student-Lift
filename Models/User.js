@@ -13,7 +13,6 @@ const UserSchema = new mongoose.Schema({
     },
     studentID:  { type: String, required: true, unique: true },
     avatar:     { type: String },
-    role:       { type: String, required: true, enum: ['User', 'Admin'], default: 'User' },
     bio:        { type: String, maxlength: 500 },
     isVerified: { type: Boolean, default: false },
     isActive:   { type: Boolean, default: true },
@@ -21,7 +20,7 @@ const UserSchema = new mongoose.Schema({
 
     // Wallet is 1:1 with user — embed it directly
     wallet: {
-        balance:     { type: Number, default: 0.00 },
+        balance:     { type: Number, default: 200.00 },
         totalAdded:  { type: Number, default: 0.00 },
         totalSpent:  { type: Number, default: 0.00 },
         lastUpdated: { type: Date, default: Date.now }
