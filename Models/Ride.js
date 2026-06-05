@@ -51,8 +51,8 @@ const rideSchema = new mongoose.Schema({
     },
     vehicle: {
         type: { type: String, required: true },
-        plate: { type: String, required: true },
-        color: { type: String, required: true }
+        plate: { type: String, required: false },
+        color: { type: String, required: false }
     },
     preferences: {
         luggageAccepted: { type: Boolean, default: false },

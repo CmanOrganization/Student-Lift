@@ -98,20 +98,25 @@
 
         // ── Load everything ─────────────────────────────────────────────────────
         async function loadAllData() {
+            console.log('Loading all ride data...');
             await Promise.all([loadPostedRides(), loadMyRequests()]);
         }
 
         // ── Posted rides (driver view) ──────────────────────────────────────────
         async function loadPostedRides() {
             try {
+                console.log('Fetching posted rides...');
                 const res = await fetch(`${API_BASE}/rides/my-rides`, { headers: authHeaders() });
+                console.log('Posted rides response status:', res.status);
                 if (!res.ok) throw new Error(`Server error ${res.status}`);
                 const rides = await res.json();
+                console.log('Posted rides data:', rides);
 
                 renderPosted(rides.filter(r => r.status === 'Active'), 'posted-list');
                 renderPostedStatic(rides.filter(r => r.status === 'Completed'), 'completed-list');
                 renderPostedStatic(rides.filter(r => r.status === 'Cancelled'), 'cancelled-list', true);
             } catch (err) {
+                console.error('Error loading posted rides:', err);
                 setHTML('posted-list', errorMsg(err.message));
             }
         }
@@ -188,9 +193,12 @@
         // ── My requests (passenger view) ────────────────────────────────────────
         async function loadMyRequests() {
             try {
+                console.log('Fetching ride requests...');
                 const res = await fetch(`${API_BASE}/bookings/my-requests`, { headers: authHeaders() });
+                console.log('Ride requests response status:', res.status);
                 if (!res.ok) throw new Error(`Server error ${res.status}`);
                 const requests = await res.json();
+                console.log('Ride requests data:', requests);
 
                 const active = requests.filter(r => ['Pending', 'Accepted'].includes(r.status));
                 const cancelled = requests.filter(r => ['Cancelled', 'Rejected'].includes(r.status));
@@ -200,6 +208,7 @@
                 // Merge cancelled requests into cancelled tab (driver cancelled rides already there)
                 appendCancelledRequests(cancelled);
             } catch (err) {
+                console.error('Error loading ride requests:', err);
                 setHTML('requests-list', errorMsg(err.message));
             }
         }
