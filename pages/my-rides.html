@@ -8,7 +8,6 @@
 </head>
 <body>
     <div class="wrapper">
-        <!-- Header -->
         <header>
             <div class="container">
                 <div class="header-content">
@@ -23,7 +22,7 @@
                         <a href="/pages/my-rides.html">My Rides</a>
                     </nav>
                     <div class="user-menu">
-                        <div class="user-avatar">
+                        <div class="user-avatar" onclick="showUserMenu()">
                             <span id="user-initial">U</span>
                         </div>
                     </div>
@@ -31,7 +30,6 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="main-content">
             <div class="container">
                 <div class="card mb-3">
@@ -40,214 +38,329 @@
                     </div>
                 </div>
 
-                <!-- Tabs -->
                 <div class="tabs">
-                    <button class="tab active" onclick="switchRideTab('active')">Active Rides</button>
-                    <button class="tab" onclick="switchRideTab('completed')">Completed</button>
-                    <button class="tab" onclick="switchRideTab('cancelled')">Cancelled</button>
+                    <button class="tab active" onclick="switchRideTab('posted', this)">Rides I Posted</button>
+                    <button class="tab" onclick="switchRideTab('requests', this)">My Requests</button>
+                    <button class="tab" onclick="switchRideTab('completed', this)">Completed</button>
+                    <button class="tab" onclick="switchRideTab('cancelled', this)">Cancelled</button>
                 </div>
 
-                <!-- Active Rides Tab -->
-                <div id="active-tab" class="tab-content active">
-                    <h2 style="margin-bottom: 1.5rem;">Currently Active</h2>
-                    
-                    <div class="ride-card">
-                        <div class="ride-header">
-                            <div class="ride-route">
-                                <div class="ride-from-to">
-                                    <span>📍</span>
-                                    <span>Stellenbosch Campus Main Gate</span>
-                                    <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
-                                    <span>Pick n Pay Shopping Center</span>
-                                </div>
-                            </div>
-                            <span class="ride-status status-available">Confirmed</span>
-                        </div>
-                        <div class="ride-details">
-                            <div class="ride-detail-label">Time:</div>
-                            <div>10:30 AM - 11:15 AM</div>
-                            
-                            <div class="ride-detail-label">Date:</div>
-                            <div>Today, May 6, 2026</div>
-                            
-                            <div class="ride-detail-label">Role:</div>
-                            <div>Passenger</div>
-                            
-                            <div class="ride-detail-label">Driver:</div>
-                            <div>John Doe (⭐⭐⭐⭐⭐)</div>
-                            
-                            <div class="ride-detail-label">Cost:</div>
-                            <div>R45</div>
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn btn-secondary">Contact Driver</button>
-                            <button class="btn btn-danger">Cancel Request</button>
-                        </div>
-                    </div>
-
-                    <div class="ride-card">
-                        <div class="ride-header">
-                            <div class="ride-route">
-                                <div class="ride-from-to">
-                                    <span>📍</span>
-                                    <span>Pretoria Campus</span>
-                                    <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
-                                    <span>Train Station</span>
-                                </div>
-                            </div>
-                            <span class="ride-status status-available">In Progress</span>
-                        </div>
-                        <div class="ride-details">
-                            <div class="ride-detail-label">Time:</div>
-                            <div>2:00 PM - 2:45 PM</div>
-                            
-                            <div class="ride-detail-label">Date:</div>
-                            <div>Today, May 6, 2026</div>
-                            
-                            <div class="ride-detail-label">Role:</div>
-                            <div>Driver</div>
-                            
-                            <div class="ride-detail-label">Passengers:</div>
-                            <div class="ride-passengers">
-                                <span class="passenger-avatar">SM</span>
-                                <span class="passenger-avatar">AK</span>
-                                <span style="color: var(--text-secondary);">2 passengers</span>
-                            </div>
-                            
-                            <div class="ride-detail-label">Revenue:</div>
-                            <div>R100 (2 × R50)</div>
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn btn-secondary">View Passengers</button>
-                            <button class="btn btn-primary">Mark Complete</button>
-                        </div>
-                    </div>
+                <!-- Rides I Posted (as driver) -->
+                <div id="posted-tab" class="tab-content active">
+                    <h2 style="margin-bottom:1.5rem;">Rides I Posted</h2>
+                    <div id="posted-list"><p class="text-center" style="color:var(--text-secondary);padding:2rem;">Loading...</p></div>
                 </div>
 
-                <!-- Completed Rides Tab -->
+                <!-- My Requests (as passenger) -->
+                <div id="requests-tab" class="tab-content">
+                    <h2 style="margin-bottom:1.5rem;">My Ride Requests</h2>
+                    <div id="requests-list"><p class="text-center" style="color:var(--text-secondary);padding:2rem;">Loading...</p></div>
+                </div>
+
+                <!-- Completed -->
                 <div id="completed-tab" class="tab-content">
-                    <h2 style="margin-bottom: 1.5rem;">Past Rides</h2>
-                    
-                    <div class="ride-card">
-                        <div class="ride-header">
-                            <div class="ride-route">
-                                <div class="ride-from-to">
-                                    <span>📍</span>
-                                    <span>Kempton Park Campus</span>
-                                    <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
-                                    <span>Shopping Mall</span>
-                                </div>
-                            </div>
-                            <span class="ride-status status-available" style="background-color: #ecfdf5; color: #166534;">Completed</span>
-                        </div>
-                        <div class="ride-details">
-                            <div class="ride-detail-label">Time:</div>
-                            <div>May 5, 2026 - 3:30 PM</div>
-                            
-                            <div class="ride-detail-label">Duration:</div>
-                            <div>45 minutes</div>
-                            
-                            <div class="ride-detail-label">Role:</div>
-                            <div>Passenger</div>
-                            
-                            <div class="ride-detail-label">Driver Rating:</div>
-                            <div>⭐⭐⭐⭐⭐ (5.0)</div>
-                            
-                            <div class="ride-detail-label">Cost:</div>
-                            <div>R60</div>
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn btn-secondary">Leave Review</button>
-                        </div>
-                    </div>
-
-                    <div class="ride-card">
-                        <div class="ride-header">
-                            <div class="ride-route">
-                                <div class="ride-from-to">
-                                    <span>📍</span>
-                                    <span>Stellenbosch Campus</span>
-                                    <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
-                                    <span>Airport</span>
-                                </div>
-                            </div>
-                            <span class="ride-status status-available" style="background-color: #ecfdf5; color: #166534;">Completed</span>
-                        </div>
-                        <div class="ride-details">
-                            <div class="ride-detail-label">Time:</div>
-                            <div>May 4, 2026 - 5:00 PM</div>
-                            
-                            <div class="ride-detail-label">Duration:</div>
-                            <div>1 hour 15 minutes</div>
-                            
-                            <div class="ride-detail-label">Role:</div>
-                            <div>Driver</div>
-                            
-                            <div class="ride-detail-label">Passengers:</div>
-                            <div>3 passengers (all 5⭐)</div>
-                            
-                            <div class="ride-detail-label">Revenue:</div>
-                            <div>R150</div>
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn btn-secondary">View Reviews</button>
-                        </div>
-                    </div>
+                    <h2 style="margin-bottom:1.5rem;">Completed Rides</h2>
+                    <div id="completed-list"><p class="text-center" style="color:var(--text-secondary);padding:2rem;">Loading...</p></div>
                 </div>
 
-                <!-- Cancelled Rides Tab -->
+                <!-- Cancelled -->
                 <div id="cancelled-tab" class="tab-content">
-                    <h2 style="margin-bottom: 1.5rem;">Cancelled Rides</h2>
-                    
-                    <div class="ride-card" style="opacity: 0.7;">
-                        <div class="ride-header">
-                            <div class="ride-route">
-                                <div class="ride-from-to">
-                                    <span>📍</span>
-                                    <span>Pretoria Campus</span>
-                                    <span style="color: var(--text-secondary); margin: 0 0.5rem;">→</span>
-                                    <span>Downtown</span>
-                                </div>
-                            </div>
-                            <span class="ride-status" style="background-color: #fef2f2; color: #991b1b;">Cancelled</span>
-                        </div>
-                        <div class="ride-details">
-                            <div class="ride-detail-label">Original Date:</div>
-                            <div>May 5, 2026 - 1:00 PM</div>
-                            
-                            <div class="ride-detail-label">Cancelled By:</div>
-                            <div>Driver</div>
-                            
-                            <div class="ride-detail-label">Reason:</div>
-                            <div>Vehicle maintenance</div>
-                        </div>
-                    </div>
-
-                    <p class="text-center" style="color: var(--text-secondary); padding: 2rem; margin-top: 1rem;">
-                        No other cancelled rides
-                    </p>
+                    <h2 style="margin-bottom:1.5rem;">Cancelled Rides</h2>
+                    <div id="cancelled-list"><p class="text-center" style="color:var(--text-secondary);padding:2rem;">Loading...</p></div>
                 </div>
             </div>
         </main>
     </div>
 
+    <div id="alert-container"></div>
+
     <script>
-        function switchRideTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Remove active class from all tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected tab
+        const API_BASE = 'http://localhost:5000/v1';
+        let authToken = null;
+        let currentUser = null;
+
+        // ── Init ────────────────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            authToken = localStorage.getItem('token');
+            const userJSON = localStorage.getItem('currentUser');
+            if (!authToken || !userJSON) { window.location.href = '/index.html'; return; }
+            currentUser = JSON.parse(userJSON);
+
+            const initial = ((currentUser.firstName || '') + ' ' + (currentUser.lastName || '')).trim().charAt(0).toUpperCase();
+            document.getElementById('user-initial').textContent = initial || 'U';
+
+            loadAllData();
+        });
+
+        function authHeaders() {
+            return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` };
+        }
+
+        // ── Load everything ─────────────────────────────────────────────────────
+        async function loadAllData() {
+            await Promise.all([loadPostedRides(), loadMyRequests()]);
+        }
+
+        // ── Posted rides (driver view) ──────────────────────────────────────────
+        async function loadPostedRides() {
+            try {
+                const res = await fetch(`${API_BASE}/rides/my-rides`, { headers: authHeaders() });
+                if (!res.ok) throw new Error(`Server error ${res.status}`);
+                const rides = await res.json();
+
+                renderPosted(rides.filter(r => r.status === 'Active'), 'posted-list');
+                renderPostedStatic(rides.filter(r => r.status === 'Completed'), 'completed-list');
+                renderPostedStatic(rides.filter(r => r.status === 'Cancelled'), 'cancelled-list', true);
+            } catch (err) {
+                setHTML('posted-list', errorMsg(err.message));
+            }
+        }
+
+        function renderPosted(rides, containerId) {
+            if (!rides.length) {
+                setHTML(containerId, '<p class="text-center" style="color:var(--text-secondary);padding:2rem;">No active rides posted.</p>');
+                return;
+            }
+            setHTML(containerId, rides.map(ride => `
+                <div class="ride-card">
+                    <div class="ride-header">
+                        <div class="ride-route">
+                            <div class="ride-from-to">
+                                <span>📍</span>
+                                <span>${ride.fromLocation}</span>
+                                <span style="color:var(--text-secondary);margin:0 0.5rem;">→</span>
+                                <span>${ride.toLocation}</span>
+                            </div>
+                        </div>
+                        <span class="ride-status status-available">Active</span>
+                    </div>
+                    <div class="ride-details">
+                        <div class="ride-detail-label">Date:</div><div>${fmtDate(ride.departureDate)}</div>
+                        <div class="ride-detail-label">Time:</div><div>${ride.departureTime}</div>
+                        <div class="ride-detail-label">Seats available:</div><div>${ride.availableSeats} / ${ride.totalSeats}</div>
+                        <div class="ride-detail-label">Cost per seat:</div><div>R${ride.costPerSeat}</div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" onclick="markComplete('${ride._id}')">Mark Complete</button>
+                        <button class="btn btn-danger" onclick="cancelRide('${ride._id}')">Cancel Ride</button>
+                    </div>
+                </div>
+            `).join(''));
+        }
+
+        function renderPostedStatic(rides, containerId, dim = false) {
+            const existing = document.getElementById(containerId);
+            if (!rides.length && existing.innerHTML.includes('Loading')) {
+                setHTML(containerId, '<p class="text-center" style="color:var(--text-secondary);padding:2rem;">Nothing here yet.</p>');
+                return;
+            }
+            if (!rides.length) return;
+
+            const statusLabel = dim ? 'Cancelled' : 'Completed';
+            const statusStyle = dim
+                ? 'background-color:#fef2f2;color:#991b1b;'
+                : 'background-color:#ecfdf5;color:#166534;';
+
+            setHTML(containerId, rides.map(ride => `
+                <div class="ride-card"${dim ? ' style="opacity:0.75;"' : ''}>
+                    <div class="ride-header">
+                        <div class="ride-route">
+                            <div class="ride-from-to">
+                                <span>📍</span>
+                                <span>${ride.fromLocation}</span>
+                                <span style="color:var(--text-secondary);margin:0 0.5rem;">→</span>
+                                <span>${ride.toLocation}</span>
+                            </div>
+                        </div>
+                        <span class="ride-status" style="${statusStyle}">${statusLabel}</span>
+                    </div>
+                    <div class="ride-details">
+                        <div class="ride-detail-label">Date:</div><div>${fmtDate(ride.departureDate)}</div>
+                        <div class="ride-detail-label">Time:</div><div>${ride.departureTime}</div>
+                        <div class="ride-detail-label">Seats:</div><div>${ride.totalSeats - ride.availableSeats} / ${ride.totalSeats} filled</div>
+                        <div class="ride-detail-label">Revenue:</div>
+                        <div>R${((ride.totalSeats - ride.availableSeats) * ride.costPerSeat).toFixed(2)}</div>
+                    </div>
+                </div>
+            `).join(''));
+        }
+
+        // ── My requests (passenger view) ────────────────────────────────────────
+        async function loadMyRequests() {
+            try {
+                const res = await fetch(`${API_BASE}/bookings/my-requests`, { headers: authHeaders() });
+                if (!res.ok) throw new Error(`Server error ${res.status}`);
+                const requests = await res.json();
+
+                const active = requests.filter(r => ['Pending', 'Accepted'].includes(r.status));
+                const cancelled = requests.filter(r => ['Cancelled', 'Rejected'].includes(r.status));
+
+                renderRequests(active, 'requests-list');
+
+                // Merge cancelled requests into cancelled tab (driver cancelled rides already there)
+                appendCancelledRequests(cancelled);
+            } catch (err) {
+                setHTML('requests-list', errorMsg(err.message));
+            }
+        }
+
+        function renderRequests(requests, containerId) {
+            if (!requests.length) {
+                setHTML(containerId, '<p class="text-center" style="color:var(--text-secondary);padding:2rem;">No active ride requests.</p>');
+                return;
+            }
+            setHTML(containerId, requests.map(req => {
+                const ride = req.rideID || {};
+                const cost = ride.costPerSeat ? (ride.costPerSeat * req.numberOfSeats).toFixed(2) : '—';
+                const statusColor = req.status === 'Accepted' ? 'status-available' : '';
+                return `
+                <div class="ride-card">
+                    <div class="ride-header">
+                        <div class="ride-route">
+                            <div class="ride-from-to">
+                                <span>📍</span>
+                                <span>${ride.fromLocation || 'Unknown'}</span>
+                                <span style="color:var(--text-secondary);margin:0 0.5rem;">→</span>
+                                <span>${ride.toLocation || 'Unknown'}</span>
+                            </div>
+                        </div>
+                        <span class="ride-status ${statusColor}">${req.status}</span>
+                    </div>
+                    <div class="ride-details">
+                        <div class="ride-detail-label">Date:</div><div>${fmtDate(ride.departureDate)}</div>
+                        <div class="ride-detail-label">Time:</div><div>${ride.departureTime || '—'}</div>
+                        <div class="ride-detail-label">Seats booked:</div><div>${req.numberOfSeats}</div>
+                        <div class="ride-detail-label">Total cost:</div><div>R${cost}</div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-danger" onclick="cancelRequest('${req._id}')">Cancel Request</button>
+                    </div>
+                </div>`;
+            }).join(''));
+        }
+
+        function appendCancelledRequests(requests) {
+            if (!requests.length) return;
+            const container = document.getElementById('cancelled-list');
+            const html = requests.map(req => {
+                const ride = req.rideID || {};
+                return `
+                <div class="ride-card" style="opacity:0.75;">
+                    <div class="ride-header">
+                        <div class="ride-route">
+                            <div class="ride-from-to">
+                                <span>📍</span>
+                                <span>${ride.fromLocation || 'Unknown'}</span>
+                                <span style="color:var(--text-secondary);margin:0 0.5rem;">→</span>
+                                <span>${ride.toLocation || 'Unknown'}</span>
+                            </div>
+                        </div>
+                        <span class="ride-status" style="background-color:#fef2f2;color:#991b1b;">${req.status}</span>
+                    </div>
+                    <div class="ride-details">
+                        <div class="ride-detail-label">Role:</div><div>Passenger</div>
+                        <div class="ride-detail-label">Seats:</div><div>${req.numberOfSeats}</div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            // Replace loading placeholder or append
+            if (container.innerHTML.includes('Loading') || container.innerHTML.includes('Nothing here')) {
+                container.innerHTML = html;
+            } else {
+                container.insertAdjacentHTML('beforeend', html);
+            }
+        }
+
+        // ── Actions ─────────────────────────────────────────────────────────────
+
+        async function markComplete(rideId) {
+            if (!confirm('Mark this ride as completed?')) return;
+            try {
+                const res = await fetch(`${API_BASE}/rides/${rideId}/complete`, {
+                    method: 'PATCH',
+                    headers: authHeaders()
+                });
+                const data = await res.json();
+                if (!res.ok) { showAlert(data.error || 'Failed to mark complete', 'danger'); return; }
+                showAlert('Ride marked as completed! ✅', 'success');
+                loadAllData();
+            } catch (err) {
+                showAlert('Could not connect to server.', 'danger');
+            }
+        }
+
+        async function cancelRide(rideId) {
+            if (!confirm('Cancel this ride? Passengers will be notified.')) return;
+            try {
+                const res = await fetch(`${API_BASE}/rides/${rideId}/cancel`, {
+                    method: 'PATCH',
+                    headers: authHeaders()
+                });
+                const data = await res.json();
+                if (!res.ok) { showAlert(data.error || 'Failed to cancel ride', 'danger'); return; }
+                showAlert('Ride cancelled.', 'success');
+                loadAllData();
+            } catch (err) {
+                showAlert('Could not connect to server.', 'danger');
+            }
+        }
+
+        async function cancelRequest(requestId) {
+            if (!confirm('Cancel this booking request? Your wallet will be refunded.')) return;
+            try {
+                const res = await fetch(`${API_BASE}/bookings/${requestId}/cancel`, {
+                    method: 'PATCH',
+                    headers: authHeaders()
+                });
+                const data = await res.json();
+                if (!res.ok) { showAlert(data.error || 'Failed to cancel request', 'danger'); return; }
+                showAlert(data.message || 'Request cancelled and wallet refunded.', 'success');
+                loadAllData();
+            } catch (err) {
+                showAlert('Could not connect to server.', 'danger');
+            }
+        }
+
+        // ── Tab switching ───────────────────────────────────────────────────────
+        function switchRideTab(tabName, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
             document.getElementById(tabName + '-tab').classList.add('active');
-            
-            // Add active class to clicked tab
-            event.target.classList.add('active');
+            if (btn) btn.classList.add('active');
+        }
+
+        // ── User menu / logout ──────────────────────────────────────────────────
+        function showUserMenu() {
+            const name = ((currentUser?.firstName || '') + ' ' + (currentUser?.lastName || '')).trim();
+            if (!confirm(`Logged in as: ${name}\nEmail: ${currentUser?.email}\n\nClick Cancel to Logout`)) logout();
+        }
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('currentUser');
+            window.location.href = '/index.html';
+        }
+
+        // ── Helpers ─────────────────────────────────────────────────────────────
+        function fmtDate(dateStr) {
+            if (!dateStr) return '—';
+            return new Date(dateStr).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+        function setHTML(id, html) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = html;
+        }
+        function errorMsg(msg) {
+            return `<p class="text-center" style="color:var(--danger-color);padding:2rem;">${msg}</p>`;
+        }
+        function showAlert(message, type = 'info') {
+            document.querySelectorAll('.alert-toast').forEach(a => a.remove());
+            const div = document.createElement('div');
+            div.className = `alert alert-${type} alert-toast`;
+            div.style.cssText = 'position:fixed;top:1rem;right:1rem;max-width:400px;z-index:10000;';
+            div.textContent = message;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 5000);
         }
     </script>
 </body>

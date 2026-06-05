@@ -55,9 +55,10 @@
                         <div class="stat-label">Rides Completed</div>
                         <div class="stat-value" id="rides-completed">0</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Money Saved</div>
+                    <div class="stat-card" style="cursor:pointer;" onclick="topUpWallet()" title="Click to top up">
+                        <div class="stat-label">Wallet Balance 💳</div>
                         <div class="stat-value" id="money-saved">R0</div>
+                        <div style="font-size:0.75rem;color:var(--primary-color);margin-top:0.25rem;">+ Top Up</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Rating</div>
@@ -115,8 +116,6 @@
                         </p>
                     </div>
                 </div>
-
-                <!-- Admin analytics removed from regular dashboard -->
             </div>
         </main>
 
