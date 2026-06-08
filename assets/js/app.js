@@ -303,7 +303,7 @@ async function bookRide(rideId, costPerSeat) {
 }
 
 function viewRideDetails(rideId) {
-    alert('Ride ID: ' + rideId + '\n\nFull ride detail page coming soon!');
+    window.location.href = `/pages/ride-details.html?id=${rideId}`;
 }
 
 async function cancelRide(rideId) {

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ride Details - Student Lift</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <a href="/pages/dashboard.html" class="logo">
+                        <div class="logo-icon">🚗</div>
+                        <span>Student Lift</span>
+                    </a>
+                    <nav>
+                        <a href="/pages/dashboard.html">Dashboard</a>
+                        <a href="/pages/post-ride.html">Post Ride</a>
+                        <a href="/pages/request-ride.html">Request Ride</a>
+                        <a href="/pages/my-rides.html">My Rides</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="container">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <h1>Ride Details</h1>
+                    <button class="btn" onclick="window.history.back()">Back</button>
+                </div>
+
+                <div id="ride-details-container" style="margin-top:1rem;">
+                    <p class="text-center" style="color:var(--text-secondary);padding:2rem;">Loading ride details...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/assets/js/ride-details.js"></script>
+</body>
+</html>
