@@ -55,7 +55,6 @@ router.patch('/:id/cancel', protect, async (req, res) => {
     }
 });
 
-module.exports = router;
 
 // PATCH /v1/rides/:id/complete  — driver marks their own ride as completed
 router.patch('/:id/complete', protect, async (req, res) => {
@@ -80,3 +79,5 @@ router.patch('/:id/complete', protect, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+module.exports = router;

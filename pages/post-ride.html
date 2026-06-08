@@ -230,11 +230,20 @@
                                     <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">
                                         Next
                                     </button>
-                                    <button type="submit" class="btn btn-success" id="submitBtn" style="display: none;">
+                                    <button type="button" class="btn btn-success" id="submitBtn" onclick="handleSubmitButton()" style="display: none;">
                                         Post Ride
                                     </button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top: 2rem;">
+                        <div class="card-header">
+                            <h2 class="card-title">Your Ride Requests</h2>
+                            <p class="card-subtitle">Past booking requests you made as a passenger</p>
+                        </div>
+                        <div class="card-body" id="ride-requests-panel">
+                            <p class="text-center" style="color: var(--text-secondary); padding: 2rem;">Loading your ride requests...</p>
                         </div>
                     </div>
                 </div>
@@ -293,6 +302,9 @@
             document.getElementById('submitBtn').style.display = currentStep === totalSteps ? 'block' : 'none';
         }
 
+        // Initialize step display immediately
+        updateStepDisplay();
+
         function validateStep(step) {
             const form = document.getElementById('postRideForm');
             if (step === 1) {
@@ -331,13 +343,166 @@
             document.getElementById('summary-seats').textContent = `${seats} seats available`;
         }
 
+        function getAuthToken() {
+            return localStorage.getItem('token');
+        }
+
+        function authHeaders() {
+            const token = getAuthToken();
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': token ? `Bearer ${token}` : ''
+            };
+        }
+
+        function redirectToLogin() {
+            window.location.href = '/index.html';
+        }
+
+        const API_BASE = 'http://localhost:5000/v1';
+
+        async function submitRide() {
+            const campus = document.querySelector('input[name="campus"]:checked').value;
+            const from = document.getElementById('from-location').value.trim();
+            const to = document.getElementById('to-location').value.trim();
+            const date = document.getElementById('ride-date').value;
+            const time = document.getElementById('ride-time').value;
+            const seats = parseInt(document.getElementById('available-seats').value, 10);
+            const cost = parseFloat(document.getElementById('cost-per-seat').value);
+            const vehicleType = document.getElementById('vehicle-type').value;
+            const luggageAccepted = document.querySelector('input[name="accepts-luggage"]').checked;
+            const petFriendly = document.querySelector('input[name="pet-friendly"]').checked;
+            const musicInCar = document.querySelector('input[name="music"]').checked;
+            const notes = document.getElementById('additional-notes').value.trim();
+
+            const campusMap = {
+                stellenbosch: 'Stellenbosch',
+                pretoria: 'Pretoria',
+                'kempton-park': 'Kempton Park'
+            };
+
+            const body = {
+                campus: campusMap[campus] || campus,
+                fromLocation: from,
+                toLocation: to,
+                departureDate: date,
+                departureTime: time,
+                estimatedDuration: 60,
+                availableSeats: seats,
+                totalSeats: seats,
+                costPerSeat: cost,
+                vehicle: {
+                    type: vehicleType
+                },
+                preferences: {
+                    luggageAccepted,
+                    petFriendly,
+                    musicInCar
+                },
+                additionalNotes: notes
+            };
+
+            const token = getAuthToken();
+            if (!token) {
+                alert('You must be logged in to post a ride.');
+                redirectToLogin();
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/rides/post-Ride`, {
+                    method: 'POST',
+                    headers: authHeaders(),
+                    body: JSON.stringify(body)
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    alert(data.error || 'Failed to post ride.');
+                    return;
+                }
+
+                alert('Ride posted successfully! Redirecting to dashboard...');
+                window.location.href = '/pages/dashboard.html';
+            } catch (error) {
+                alert('Could not connect to server. Please try again later.');
+                console.error(error);
+            }
+        }
+
+        function handleSubmitButton() {
+            if (currentStep < totalSteps) {
+                nextStep();
+                return;
+            }
+            if (validateStep(currentStep)) {
+                submitRide();
+            }
+        }
+
         document.getElementById('postRideForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            // Here you would send the form data to your backend
-            alert('Ride posted successfully!');
-            // Redirect to dashboard
-            window.location.href = '/pages/dashboard.html';
+            handleSubmitButton();
         });
+
+        async function renderRideRequests(requests) {
+            const container = document.getElementById('ride-requests-panel');
+            if (!container) return;
+
+            if (!requests || !requests.length) {
+                container.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">No past ride requests found.</p>';
+                return;
+            }
+
+            container.innerHTML = requests.map(req => {
+                const ride = req.rideID || {};
+                const rideRoute = ride.fromLocation && ride.toLocation ? `${ride.fromLocation} → ${ride.toLocation}` : 'Ride details unavailable';
+                const cost = ride.costPerSeat ? `R${(ride.costPerSeat * req.numberOfSeats).toFixed(2)}` : 'N/A';
+                return `
+                    <div class="ride-card" style="margin-bottom: 1rem;">
+                        <div class="ride-header">
+                            <div class="ride-route">
+                                <div class="ride-from-to">
+                                    <span>📍</span>
+                                    <span>${rideRoute}</span>
+                                </div>
+                            </div>
+                            <span class="ride-status ${req.status === 'Accepted' ? 'status-available' : 'status-full'}">${req.status}</span>
+                        </div>
+                        <div class="ride-details">
+                            <div class="ride-detail-label">Requested Seats:</div><div>${req.numberOfSeats}</div>
+                            <div class="ride-detail-label">Total Cost:</div><div>${cost}</div>
+                            <div class="ride-detail-label">Requested On:</div><div>${new Date(req.createdAt).toLocaleDateString('en-ZA')}</div>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        async function loadMyRequests() {
+            const token = getAuthToken();
+            const container = document.getElementById('ride-requests-panel');
+            if (!container) return;
+            if (!token) {
+                container.innerHTML = '<p class="text-center" style="color: var(--danger-color); padding: 2rem;">Please log in to see your ride requests.</p>';
+                return;
+            }
+
+            container.innerHTML = '<p class="text-center" style="color: var(--text-secondary); padding: 2rem;">Loading your ride requests...</p>';
+            try {
+                const res = await fetch(`${API_BASE}/bookings/my-requests`, { headers: authHeaders() });
+                if (!res.ok) {
+                    container.innerHTML = `<p class="text-center" style="color: var(--danger-color); padding: 2rem;">Unable to fetch ride requests (${res.status}).</p>`;
+                    return;
+                }
+                const requests = await res.json();
+                renderRideRequests(requests);
+            } catch (error) {
+                container.innerHTML = '<p class="text-center" style="color: var(--danger-color); padding: 2rem;">Could not load ride requests.</p>';
+                console.error(error);
+            }
+        }
+
+        loadMyRequests();
 
         // Set minimum date to today
         document.getElementById('ride-date').min = new Date().toISOString().split('T')[0];

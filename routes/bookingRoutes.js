@@ -71,8 +71,6 @@ router.get('/my-requests', protect, async (req, res) => {
     }
 });
 
-module.exports = router;
-
 // PATCH /v1/bookings/:id/cancel  — passenger cancels their own ride request & refunds wallet
 router.patch('/:id/cancel', protect, async (req, res) => {
     try {
@@ -100,3 +98,5 @@ router.patch('/:id/cancel', protect, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+module.exports = router;
