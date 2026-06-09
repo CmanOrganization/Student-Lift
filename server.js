@@ -1,7 +1,11 @@
-require('dotenv').config();
+const fs = require('fs');
+const dotenv = require('dotenv');
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+
+const envPath = fs.existsSync('.env') ? '.env' : '.env.example';
+dotenv.config({ path: envPath });
 
 const rideRoutes = require('./routes/rideRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
