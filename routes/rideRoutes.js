@@ -29,7 +29,48 @@ router.get('/all-Rides', async (req, res) => {
     }
 });
 
-// GET /v1/rides/my-rides  — rides posted by the logged-in driver
+function escapeRegex(value) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+router.get('/search', async (req, res) => {
+    try {
+        const { campus, date, passengers, maxBudget, pickup, dropoff } = req.query;
+
+        const filter = { status: 'Active' };
+
+        if (campus) {
+            filter.campus = { $regex: new RegExp(`^${escapeRegex(campus)}$`, 'i') };
+        }
+        if (pickup) {
+            filter.fromLocation = { $regex: new RegExp(escapeRegex(pickup), 'i') };
+        }
+        if (dropoff) {
+            filter.toLocation = { $regex: new RegExp(escapeRegex(dropoff), 'i') };
+        }
+        if (passengers) filter.availableSeats = { $gte: parseInt(passengers) };
+        if (maxBudget) filter.costPerSeat = { $lte: parseFloat(maxBudget) };
+
+        if (date) {
+            const searchDate = new Date(date);
+            const nextDay = new Date(searchDate);
+            nextDay.setDate(nextDay.getDate() + 1);
+
+            filter.departureDate = {
+                $gte: searchDate,
+                $lt: nextDay
+            };
+        }
+
+        const rides = await Ride.find(filter)
+            .populate('driverID', 'firstName lastName ratingSummary profilePhoto')
+            .sort({ departureDate: 1 });
+
+        res.json(rides);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.get('/my-rides', protect, async (req, res) => {
     try {
         const rides = await Ride.find({ driverID: req.user.id })
@@ -40,7 +81,6 @@ router.get('/my-rides', protect, async (req, res) => {
     }
 });
 
-// PATCH /v1/rides/:id/cancel  — driver cancels their own ride
 router.patch('/:id/cancel', protect, async (req, res) => {
     try {
         const ride = await Ride.findOneAndUpdate(
@@ -56,7 +96,6 @@ router.patch('/:id/cancel', protect, async (req, res) => {
 });
 
 
-// PATCH /v1/rides/:id/complete  — driver marks their own ride as completed
 router.patch('/:id/complete', protect, async (req, res) => {
     try {
         const ride = await Ride.findOne({ _id: req.params.id, driverID: req.user.id, status: 'Active' });
@@ -75,6 +114,16 @@ router.patch('/:id/complete', protect, async (req, res) => {
         await ride.save();
 
         res.json({ message: 'Ride marked as completed.', ride });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/:id', async (req, res) => {
+    try {
+        const ride = await Ride.findById(req.params.id).populate('driverID', 'firstName lastName ratingSummary profilePhoto');
+        if (!ride) return res.status(404).json({ error: 'Ride not found.' });
+        res.json(ride);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

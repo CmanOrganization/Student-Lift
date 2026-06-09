@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Profile - Student Lift</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <a href="/pages/dashboard.html" class="logo">
+                        <div class="logo-icon">🚗</div>
+                        <span>Student Lift</span>
+                    </a>
+                    <nav>
+                        <a href="/pages/dashboard.html">Dashboard</a>
+                        <a href="/pages/post-ride.html">Post Ride</a>
+                        <a href="/pages/request-ride.html">Request Ride</a>
+                        <a href="/pages/my-rides.html">My Rides</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="container">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <div>
+                            <h1 class="card-title">Driver Profile</h1>
+                            <p class="card-subtitle">View details about the driver</p>
+                        </div>
+                        <button class="btn" onclick="window.history.back()">Back</button>
+                    </div>
+                </div>
+
+                <div id="driver-profile-container"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/assets/js/driver-profile.js"></script>
+</body>
+</html>

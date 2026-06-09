@@ -7,6 +7,7 @@ const rideRoutes = require('./routes/rideRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const metricsRoutes = require('./routes/metricsRoutes');
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,6 +30,7 @@ mongoose.connect(MONGO_URI)
 // API Routes
 app.use('/v1/rides', rideRoutes);
 app.use('/v1/bookings', bookingRoutes);
+app.use('/v1/users', userRoutes);
 app.use('/v1/metrics', metricsRoutes);
 app.use('/v1/auth', authRoutes);
 
